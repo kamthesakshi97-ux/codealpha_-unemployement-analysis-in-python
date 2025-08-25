@@ -1,0 +1,103 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from io import StringIO
+
+# --- Step 1: Simulate Data Loading (Replace with your actual data file) ---
+# For demonstration purposes, we are using a sample dataset as if it were loaded from a CSV file.
+# In a real-world scenario, you would use:
+# df = pd.read_csv('your_unemployment_data.csv')
+# Make sure your CSV has 'Date' and 'Unemployment_Rate' columns.
+
+sample_data = """
+Date,Unemployment_Rate
+2019-01-01,3.9
+2019-02-01,3.8
+2019-03-01,3.8
+2019-04-01,3.6
+2019-05-01,3.6
+2019-06-01,3.7
+2019-07-01,3.7
+2019-08-01,3.7
+2019-09-01,3.5
+2019-10-01,3.6
+2019-11-01,3.5
+2019-12-01,3.5
+2020-01-01,3.5
+2020-02-01,3.5
+2020-03-01,4.4
+2020-04-01,14.7
+2020-05-01,13.3
+2020-06-01,11.1
+2020-07-01,10.2
+2020-08-01,8.4
+2020-09-01,7.9
+2020-10-01,6.9
+2020-11-01,6.7
+2020-12-01,6.7
+2021-01-01,6.3
+2021-02-01,6.2
+2021-03-01,6.0
+2021-04-01,6.1
+2021-05-01,5.8
+2021-06-01,5.9
+2021-07-01,5.4
+2021-08-01,5.2
+2021-09-01,4.8
+2021-10-01,4.6
+2021-11-01,4.2
+2021-12-01,3.9
+"""
+df = pd.read_csv(StringIO(sample_data))
+
+# --- Step 2: Data Cleaning and Preparation ---
+# Convert the 'Date' column to a proper datetime object and set it as the index.
+df['Date'] = pd.to_datetime(df['Date'])
+df.set_index('Date', inplace=True)
+
+# Check the data for any missing values or initial information.
+print("Initial Data Info:")
+print(df.info())
+print("\nFirst 5 rows:")
+print(df.head())
+print("-" * 50)
+
+# --- Step 3: Visualize Overall Trends ---
+# We'll create a line plot to show the unemployment rate over time.
+# This helps us identify long-term patterns and significant events.
+plt.figure(figsize=(12, 6))
+sns.lineplot(data=df, x=df.index, y='Unemployment_Rate', marker='o')
+plt.title('Monthly Unemployment Rate Over Time', fontsize=16, fontweight='bold')
+plt.xlabel('Date', fontsize=12)
+plt.ylabel('Unemployment Rate (%)', fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.tight_layout()
+plt.show()
+
+# --- Step 4: Analyze the Impact of COVID-19 ---
+# We can clearly see the sharp increase in April 2020. Let's highlight this.
+# Find the peak unemployment rate and the date it occurred.
+max_rate = df['Unemployment_Rate'].max()
+peak_date = df['Unemployment_Rate'].idxmax()
+print(f"The highest unemployment rate was {max_rate}% in {peak_date.strftime('%B %Y')}.")
+print("This spike is a direct result of the economic shutdowns due to the COVID-19 pandemic.")
+print("-" * 50)
+
+# --- Step 5: Identify Seasonal Trends (if any) ---
+# To check for seasonality, we can plot the data on a monthly basis.
+# A box plot is a good way to visualize the distribution of rates for each month across different years.
+df['Month'] = df.index.month
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=df, x='Month', y='Unemployment_Rate')
+plt.title('Seasonal Trends: Monthly Unemployment Rate Distribution', fontsize=16, fontweight='bold')
+plt.xlabel('Month', fontsize=12)
+plt.ylabel('Unemployment Rate (%)', fontsize=12)
+plt.tight_layout()
+plt.show()
+
+# --- Step 6: Present Insights and Conclusions ---
+print("### Key Insights from the Analysis:")
+print("1. **Overall Trend:** The unemployment rate remained relatively stable and low in 2019.")
+print(f"2. **COVID-19 Impact:** There was a dramatic, sharp increase to {max_rate}% in {peak_date.strftime('%B %Y')} coinciding with the pandemic.")
+print("3. **Post-Pandemic Recovery:** The rate began a steady decline after the initial peak, indicating economic recovery.")
+print("4. **Seasonal Patterns:** The box plot shows that while there are monthly variations, there isn't a strong, consistent seasonal pattern visible in this short timeframe, though rates are generally a little higher in the spring and early summer.")
